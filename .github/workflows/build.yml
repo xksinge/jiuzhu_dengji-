@@ -1,0 +1,53 @@
+name: Build 救助登记工具
+on: [push]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: pip install openpyxl pyinstaller
+      - name: 打包Windows EXE
+        run: pyinstaller -w -F 救助登记.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Windows-救助登记exe
+          path: dist/*.exe
+
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: sudo apt update && sudo apt install -y python3-tk
+      - run: pip install openpyxl pyinstaller
+      - name: 打包x86麒麟（兆芯）
+        run: pyinstaller -w -F 救助登记.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Linux-x64-救助登记
+          path: dist/救助登记
+
+  build-linux-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build ARM64（飞腾/鲲鹏麒麟）
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: aarch64
+          distro: ubuntu22.04
+          dockerRunArgs: --volume "${PWD}:/work"
+          shell: /bin/bash
+          run: |
+            apt update && apt install -y python3-tk python3-pip
+            pip3 install openpyxl pyinstaller
+            pyinstaller -w -F 救助登记.py
+          artifact: dist/救助登记
