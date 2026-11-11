@@ -43,19 +43,19 @@ jobs:
           mkdir -p package/usr/share/applications
           cp dist/救助信息登记工具 package/usr/bin/
           cat > package/usr/share/applications/救助信息登记工具.desktop <<'EOF'
-[Desktop Entry]
-Name=救助信息登记工具
-Comment=救助信息登记工具
-Exec=/usr/bin/救助信息登记工具
-Type=Application
-Categories=Utility;Office;
-EOF
+            [Desktop Entry]
+            Name=救助信息登记工具
+            Comment=救助信息登记工具
+            Exec=/usr/bin/救助信息登记工具
+            Type=Application
+            Categories=Utility;Office;
+          EOF
 
       - name: 打包 rpm（银河麒麟V10 SP1 海光C86-3G）
-        run: >
-          fpm -s dir -t rpm -n 救助信息登记工具 -v 1.0.0 --arch x86_64 -C package
-          --description "救助信息登记工具"
-          --maintainer "admin <admin@local>"
+        run: |
+          fpm -s dir -t rpm -n 救助信息登记工具 -v 1.0.0 --arch x86_64 -C package \
+          --description "救助信息登记工具" \
+          --maintainer "admin <admin@local>" \
           --depends "glibc >= 2.31" .
 
       - name: 上传麒麟rpm包
