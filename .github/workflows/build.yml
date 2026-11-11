@@ -12,11 +12,11 @@ jobs:
           python-version: "3.10"
       - run: pip install openpyxl pyinstaller
       - name: 打包Windows EXE
-        run: pyinstaller -w -F app.py -n 救助信息登记工具
+        run: pyinstaller -w -F "救助信息登记工具.py" -n 救助信息登记工具
       - uses: actions/upload-artifact@v4
         with:
           name: Windows-救助信息登记工具
-          path: dist/救助信息登记工具.exe
+          path: dist/*
 
   build-linux-x64:
     runs-on: ubuntu-latest
@@ -29,8 +29,8 @@ jobs:
       - run: sudo apt update && sudo apt install -y python3-tk
       - run: pip install openpyxl pyinstaller
       - name: 打包x86麒麟
-        run: pyinstaller -w -F app.py -n 救助信息登记工具
+        run: pyinstaller -w -F "救助信息登记工具.py" -n 救助信息登记工具
       - uses: actions/upload-artifact@v4
         with:
           name: Linux-x64-救助信息登记工具
-          path: dist/救助信息登记工具
+          path: dist/*
