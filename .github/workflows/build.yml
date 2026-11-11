@@ -50,4 +50,7 @@ jobs:
             apt update && apt install -y python3-tk python3-pip
             pip3 install openpyxl pyinstaller
             pyinstaller -w -F 救助登记.py
-          artifact: dist/救助登记
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Linux-arm64-救助登记
+          path: dist/救助登记
