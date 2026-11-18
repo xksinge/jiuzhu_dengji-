@@ -1,4 +1,4 @@
-name: Build 救助信息登记工具 Win + 麒麟V10SP1 rpm
+name: 打包救助工具
 on:
   push:
     branches: [ main ]
@@ -7,55 +7,25 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 配置Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-      - run: pip install openpyxl pyinstaller -i https://pypi.tuna.tsinghua.edu.cn/simple
-      - name: 打包Windows exe
-        run: pyinstaller -w -F "救助信息登记工具.py" -n 救助信息登记工具
-      - name: 上传Windows产物
+          python-version: "3.11"
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl pyinstaller
+
+      - name: 打包exe
+        run: |
+          pyinstaller -F -w 救助信息登记工具.py --hidden-import openpyxl --collect-data openpyxl
+
+      - name: 上传成品
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-救助信息登记工具
-          path: "dist/*"
-
-  build-kylin-rpm:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - run: pip install openpyxl pyinstaller -i https://pypi.tuna.tsinghua.edu.cn/simple
-      - name: PyInstaller编译Linux单文件
-        run: pyinstaller -w -F "救助信息登记工具.py" -n 救助信息登记工具
-
-      - name: 安装fpm依赖
-        run: |
-          sudo apt update
-          sudo apt install -y ruby ruby-dev rubygems build-essential
-          sudo gem install --no-document fpm
-
-      - name: 准备打包目录
-        run: |
-          mkdir -p package/usr/bin
-          mkdir -p package/usr/share/applications
-          cp dist/救助信息登记工具 package/usr/bin/
-          echo "[Desktop Entry]" > package/usr/share/applications/救助信息登记工具.desktop
-          echo "Name=救助信息登记工具" >> package/usr/share/applications/救助信息登记工具.desktop
-          echo "Comment=救助信息登记工具" >> package/usr/share/applications/救助信息登记工具.desktop
-          echo "Exec=/usr/bin/救助信息登记工具" >> package/usr/share/applications/救助信息登记工具.desktop
-          echo "Type=Application" >> package/usr/share/applications/救助信息登记工具.desktop
-          echo "Categories=Utility;Office;" >> package/usr/share/applications/救助信息登记工具.desktop
-
-      - name: 打包 rpm（银河麒麟V10 SP1 海光C86-3G）
-        run: fpm -s dir -t rpm -n 救助信息登记工具 -v 1.0.0 --arch x86_64 -C package --description "救助信息登记工具" --maintainer "admin <admin@local>" --depends "glibc >= 2.31" .
-
-      - name: 上传麒麟rpm包
-        uses: actions/upload-artifact@v4
-        with:
-          name: 银河麒麟V10SP1-rpm-海光C86
-          path: "*.rpm"
+          name: 救助工具-Windows
+          path: dist/*.exe
